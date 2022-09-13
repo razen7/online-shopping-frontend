@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { BASE_URL } from '../../constants';
+import { getAllAds, showInterest } from '../../functions';
 
 function Copyright() {
   return (
@@ -36,12 +36,7 @@ export default function ViewAllAds() {
   const [allAds, setAllAds] = React.useState([]);
 
   React.useEffect(() => {
-    fetch(BASE_URL + 'ads')
-      .then((response) => response.json())
-      .then(data => {
-        setAllAds(data.ads);
-      })
-
+    getAllAds(setAllAds);
   }, [])
 
   return (
@@ -112,10 +107,16 @@ export default function ViewAllAds() {
                     <Typography>
                       {ad.description}
                     </Typography>
+                    <Typography>
+                      Interested Count: {ad.interestedBuyers.length}
+                    </Typography>
+                    <Typography>
+                      My Ad: {ad.interestedBuyers.includes(localStorage.getItem('userId'))?'yes':'no'}
+                    </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small">View</Button>
-                    <Button size="small">Edit</Button>
+                    <Button size="small" onClick={() => showInterest(ad._id,setAllAds)}>Show Interest</Button>
+                    <Button size="small">Close Ad</Button>
                   </CardActions>
                 </Card>
               </Grid>

@@ -36,7 +36,6 @@ export default function SignIn() {
     event.preventDefault();
 
     const data = new FormData(event.currentTarget);
-
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -48,11 +47,15 @@ export default function SignIn() {
     alert(localStorage.getItem('userId'));
     fetch(BASE_URL + 'auth/signin', requestOptions)
       .then(async (response) => {
-        let status = await response.text();
-        alert(status);
-        if (status.includes('Login Successful')) {
-          let tmp = status.split(' ');
-          localStorage.setItem('userId', tmp.pop());
+        let responseText = await response.text();
+
+        if (responseText === 'Email not registered' || responseText === 'Incorrect Password') {
+          alert(responseText);
+        } else {
+          let responseObj = JSON.parse(responseText);
+          let { accessToken, id } = responseObj;
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('userId', id);
           goTo('/ads');
         }
       })
